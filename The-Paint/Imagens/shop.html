@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Paint Shop — Sally Hansen x Jared McCain</title>
+<style>
+  /* ⚠️ VERSÃO PROTÓTIPO — Layout desatualizado, será melhorado com o tempo */
+  :root {
+    --orange: #f97316; --orange-dark: #ea6a00; --black: #111111;
+    --dark: #1a1a1a; --white: #ffffff; --purple: #7b2d8b;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: "Segoe UI", Arial, sans-serif; background: var(--black); color: var(--white); font-size: 16px; }
+
+  .version-banner {
+    background: #7b2d8b; color: #fff; text-align: center;
+    padding: 8px; font-size: 13px; font-weight: 600; letter-spacing: 0.5px;
+  }
+
+  header {
+    background: var(--black); border-bottom: 2px solid var(--orange);
+    padding: 0 32px; height: 64px; display: flex; align-items: center; justify-content: space-between;
+  }
+  .logo { font-size: 22px; font-weight: 900; color: var(--orange); }
+  .logo span { color: var(--white); font-size: 14px; font-weight: 400; display: block; }
+  nav { display: flex; gap: 24px; align-items: center; }
+  nav a { color: #ccc; text-decoration: none; font-size: 15px; font-weight: 500; }
+  nav a.active { color: var(--orange); }
+  .btn-login { background: var(--orange); color: #fff; border: none; padding: 10px 22px; border-radius: 6px; font-weight: 700; cursor: pointer; font-size: 15px; }
+
+  /* SHOP HERO */
+  .shop-hero {
+    background: linear-gradient(135deg, var(--purple) 0%, #4a1a5a 60%, #2d0f3a 100%);
+    padding: 60px 32px; text-align: center; position: relative; overflow: hidden;
+  }
+  .shop-hero::before { content: "💄"; font-size: 200px; position: absolute; opacity: 0.06; right: 0; top: -20px; pointer-events: none; }
+  .shop-hero h1 { font-size: 46px; font-weight: 900; margin-bottom: 12px; }
+  .shop-hero p { font-size: 18px; color: rgba(255,255,255,0.75); max-width: 500px; margin: 0 auto 24px; }
+  .shop-rating { font-size: 24px; }
+
+  /* FRETE BANNER */
+  .frete-banner {
+    background: var(--orange); color: var(--black); text-align: center;
+    padding: 12px; font-size: 15px; font-weight: 700;
+  }
+
+  /* FILTER BAR */
+  .filter-bar { padding: 32px 32px 0; display: flex; gap: 12px; flex-wrap: wrap; }
+  .filter-btn {
+    padding: 10px 22px; border-radius: 24px; border: 2px solid #333;
+    background: transparent; color: #ccc; font-size: 14px; font-weight: 600;
+    cursor: pointer; transition: all 0.2s;
+  }
+  .filter-btn.active { background: var(--purple); border-color: var(--purple); color: #fff; }
+  .filter-btn:hover { border-color: var(--purple); color: #fff; }
+
+  /* PRODUCTS GRID */
+  .products-section { padding: 32px; }
+  .products-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+  .product-card {
+    background: var(--dark); border-radius: 12px; overflow: hidden;
+    border: 1px solid #2a2a2a; transition: border-color 0.2s, transform 0.2s;
+  }
+  .product-card:hover { border-color: var(--purple); transform: translateY(-4px); }
+  .product-img {
+    height: 160px; display: flex; align-items: center; justify-content: center;
+    font-size: 64px; background: linear-gradient(135deg, #2a1a3a, #1a1a2a);
+  }
+  .product-body { padding: 16px; }
+  .product-cat { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--purple); font-weight: 700; margin-bottom: 4px; }
+  .product-name { font-size: 15px; font-weight: 800; margin-bottom: 4px; }
+  .product-rating { font-size: 12px; color: #f59e0b; margin-bottom: 10px; }
+  .product-price { font-size: 20px; font-weight: 900; color: var(--orange); margin-bottom: 12px; }
+  .btn-add {
+    width: 100%; background: var(--purple); color: #fff; border: none;
+    padding: 11px; border-radius: 8px; font-weight: 700; cursor: pointer;
+    font-size: 14px; transition: background 0.2s;
+  }
+  .btn-add:hover { background: #9b3dab; }
+
+  /* TOAST */
+  .toast {
+    position: fixed; bottom: 32px; right: 32px; background: #22c55e;
+    color: #fff; padding: 14px 24px; border-radius: 10px; font-weight: 700;
+    font-size: 15px; display: none;
+  }
+
+  footer {
+    background: #0a0a0a; border-top: 2px solid var(--orange); padding: 32px;
+    text-align: center; color: #444; font-size: 13px; margin-top: 40px;
+  }
+  .footer-logo { font-size: 20px; font-weight: 900; color: var(--orange); margin-bottom: 8px; }
+</style>
+</head>
+<body>
+
+<div class="version-banner">
+  ⚠️ PROTÓTIPO v0.1 — Layout desatualizado, será melhorado com o tempo | The Paint — Basquete Total
+</div>
+
+<header>
+  <div class="logo">THE PAINT <span>Basquete Total</span></div>
+  <nav>
+    <a href="#">Início</a><a href="#">NBA</a><a href="#">FIBA</a>
+    <a href="#" class="active">Loja</a><a href="#">Sobre</a><a href="#">Contato</a>
+    <button class="btn-login">Entrar</button>
+  </nav>
+</header>
+
+<div class="shop-hero">
+  <h1>💅 The Paint Shop</h1>
+  <p>Coleção de unhas inspirada em Jared McCain e Sally Hansen — onde o basquete encontra a nail beauty.</p>
+  <div class="shop-rating">⭐⭐⭐⭐⭐ <strong>4,9</strong> · 1.243 avaliações</div>
+</div>
+
+<div class="frete-banner">
+  🚚 FRETE GRÁTIS em compras acima de R$ 150,00
+</div>
+
+<div class="filter-bar">
+  <button class="filter-btn active">Todos</button>
+  <button class="filter-btn">Unhas / Nail Beauty</button>
+  <button class="filter-btn">Skincare</button>
+  <button class="filter-btn">Corpo</button>
+  <button class="filter-btn">Acessórios</button>
+</div>
+
+<div class="products-section">
+  <div class="products-grid">
+
+    <div class="product-card">
+      <div class="product-img">💋</div>
+      <div class="product-body">
+        <div class="product-cat">Unhas / Nail Beauty</div>
+        <div class="product-name">Sally Hansen x Jared McCain — Most Valuable Polish</div>
+        <div class="product-rating">⭐⭐⭐⭐⭐ (284)</div>
+        <div class="product-price">R$ 49,90</div>
+        <button class="btn-add">+ Adicionar ao carrinho</button>
+      </div>
+    </div>
+
+    <div class="product-card">
+      <div class="product-img">🎨</div>
+      <div class="product-body">
+        <div class="product-cat">Unhas / Nail Beauty</div>
+        <div class="product-name">Bucket Blue</div>
+        <div class="product-rating">⭐⭐⭐⭐⭐ (197)</div>
+        <div class="product-price">R$ 89,90</div>
+        <button class="btn-add">+ Adicionar ao carrinho</button>
+      </div>
+    </div>
+
+    <div class="product-card">
+      <div class="product-img">💅</div>
+      <div class="product-body">
+        <div class="product-cat">Unhas / Nail Beauty</div>
+        <div class="product-name">GOAT Gold</div>
+        <div class="product-rating">⭐⭐⭐⭐½ (156)</div>
+        <div class="product-price">R$ 39,90</div>
+        <button class="btn-add">+ Adicionar ao carrinho</button>
+      </div>
+    </div>
+
+    <div class="product-card">
+      <div class="product-img">✨</div>
+      <div class="product-body">
+        <div class="product-cat">Unhas / Nail Beauty</div>
+        <div class="product-name">Point Guard Pink</div>
+        <div class="product-rating">⭐⭐⭐⭐⭐ (312)</div>
+        <div class="product-price">R$ 129,90</div>
+        <button class="btn-add">+ Adicionar ao carrinho</button>
+      </div>
+    </div>
+
+    <div class="product-card">
+      <div class="product-img">💧</div>
+      <div class="product-body">
+        <div class="product-cat">Unhas / Nail Beauty</div>
+        <div class="product-name">Rookie Red</div>
+        <div class="product-rating">⭐⭐⭐⭐⭐ (228)</div>
+        <div class="product-price">R$ 74,90</div>
+        <button class="btn-add">+ Adicionar ao carrinho</button>
+      </div>
+    </div>
+
+    <div class="product-card">
+      <div class="product-img">🧖</div>
+      <div class="product-body">
+        <div class="product-cat">Unhas / Nail Beauty</div>
+        <div class="product-name">Net Neutral</div>
+        <div class="product-rating">⭐⭐⭐⭐½ (143)</div>
+        <div class="product-price">R$ 44,90</div>
+        <button class="btn-add">+ Adicionar ao carrinho</button>
+      </div>
+    </div>
+
+    <div class="product-card">
+      <div class="product-img">🧴</div>
+      <div class="product-body">
+        <div class="product-cat">Corpo</div>
+        <div class="product-name">Clutch Coat</div>
+        <div class="product-rating">⭐⭐⭐⭐⭐ (189)</div>
+        <div class="product-price">R$ 59,90</div>
+        <button class="btn-add">+ Adicionar ao carrinho</button>
+      </div>
+    </div>
+
+    <div class="product-card">
+      <div class="product-img">🛁</div>
+      <div class="product-body">
+        <div class="product-cat">Corpo</div>
+        <div class="product-name">Championship Shine Kit</div>
+        <div class="product-rating">⭐⭐⭐⭐⭐ (267)</div>
+        <div class="product-price">R$ 139,90</div>
+        <button class="btn-add">+ Adicionar ao carrinho</button>
+      </div>
+    </div>
+
+    <div class="product-card">
+      <div class="product-img">👜</div>
+      <div class="product-body">
+        <div class="product-cat">Acessórios</div>
+        <div class="product-name">Jared McCain Nail Case</div>
+        <div class="product-rating">⭐⭐⭐⭐⭐ (201)</div>
+        <div class="product-price">R$ 89,90</div>
+        <button class="btn-add">+ Adicionar ao carrinho</button>
+      </div>
+    </div>
+
+    <div class="product-card">
+      <div class="product-img">🖌️</div>
+      <div class="product-body">
+        <div class="product-cat">Acessórios</div>
+        <div class="product-name">Sally Hansen Pro Kit</div>
+        <div class="product-rating">⭐⭐⭐⭐½ (178)</div>
+        <div class="product-price">R$ 119,90</div>
+        <button class="btn-add">+ Adicionar ao carrinho</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="toast" id="toast">✅ Produto adicionado ao carrinho!</div>
+
+<footer>
+  <div class="footer-logo">THE PAINT 🏀</div>
+  <div>© 2026 The Paint — Basquete Total · contato@thepaint.com.br</div>
+</footer>
+
+<script>
+document.querySelectorAll('.btn-add').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const t = document.getElementById('toast');
+    t.style.display = 'block';
+    setTimeout(() => { t.style.display = 'none'; }, 2500);
+  });
+});
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  });
+});
+</script>
+</body>
+</html>
