@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contato — The Paint</title>
+<style>
+  /* ⚠️ VERSÃO PROTÓTIPO — Layout desatualizado, será melhorado com o tempo */
+  :root {
+    --orange: #f97316; --orange-dark: #ea6a00; --black: #111111;
+    --dark: #1a1a1a; --white: #ffffff;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: "Segoe UI", Arial, sans-serif; background: var(--black); color: var(--white); font-size: 16px; }
+
+  .version-banner { background: #7b2d8b; color: #fff; text-align: center; padding: 8px; font-size: 13px; font-weight: 600; }
+
+  header {
+    background: var(--black); border-bottom: 2px solid var(--orange);
+    padding: 0 32px; height: 64px; display: flex; align-items: center; justify-content: space-between;
+  }
+  .logo { font-size: 22px; font-weight: 900; color: var(--orange); }
+  .logo span { color: var(--white); font-size: 14px; font-weight: 400; display: block; }
+  nav { display: flex; gap: 24px; align-items: center; }
+  nav a { color: #ccc; text-decoration: none; font-size: 15px; font-weight: 500; }
+  nav a.active { color: var(--orange); }
+  .btn-login-h { background: var(--orange); color: #fff; border: none; padding: 10px 22px; border-radius: 6px; font-weight: 700; cursor: pointer; font-size: 15px; }
+
+  /* PAGE TITLE */
+  .page-title { padding: 48px 32px 32px; }
+  .page-title h1 { font-size: 36px; font-weight: 900; }
+  .page-title h1 span { color: var(--orange); }
+  .page-title p { color: #888; margin-top: 8px; }
+
+  /* CONTACT GRID */
+  .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; padding: 0 32px 60px; }
+
+  /* FORM */
+  .contact-form-card { background: var(--dark); border-radius: 16px; padding: 36px; border: 1px solid #2a2a2a; }
+  .form-title { font-size: 22px; font-weight: 800; margin-bottom: 24px; }
+  .form-group { margin-bottom: 18px; }
+  .form-group label { display: block; font-size: 14px; font-weight: 600; margin-bottom: 6px; color: #bbb; }
+  .form-group input, .form-group select, .form-group textarea {
+    width: 100%; background: #111; border: 1.5px solid #333; color: #fff;
+    padding: 12px 14px; border-radius: 8px; font-size: 15px; font-family: inherit;
+    outline: none; transition: border-color 0.2s;
+  }
+  .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--orange); }
+  .form-group textarea { height: 120px; resize: vertical; }
+  .btn-submit { width: 100%; background: var(--orange); color: #fff; border: none; padding: 15px; border-radius: 8px; font-size: 16px; font-weight: 800; cursor: pointer; margin-top: 8px; transition: background 0.2s; }
+  .btn-submit:hover { background: var(--orange-dark); }
+
+  /* MAP & INFO */
+  .map-info-card { display: flex; flex-direction: column; gap: 20px; }
+  .info-card { background: var(--dark); border-radius: 16px; padding: 28px; border: 1px solid #2a2a2a; }
+  .info-title { font-size: 18px; font-weight: 800; margin-bottom: 16px; color: var(--orange); }
+  .info-item { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; color: #bbb; font-size: 15px; }
+  .info-icon { font-size: 20px; }
+  .map-placeholder {
+    background: linear-gradient(135deg, #1a2a1a, #0a1a0a);
+    border-radius: 12px; height: 240px; display: flex; align-items: center;
+    justify-content: center; border: 1px solid #2a3a2a; flex-direction: column; gap: 8px;
+  }
+  .map-placeholder span { font-size: 48px; }
+  .map-placeholder p { color: #666; font-size: 14px; }
+
+  /* MODAL OVERLAY */
+  .modal-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.75); display: flex; align-items: center; justify-content: center;
+    z-index: 1000; opacity: 0; pointer-events: none; transition: opacity 0.3s;
+  }
+  .modal-overlay.active { opacity: 1; pointer-events: all; }
+  .modal {
+    background: #1a1a1a; border-radius: 16px; padding: 36px; width: 420px;
+    border: 1px solid #333; position: relative;
+    transform: translateY(20px); transition: transform 0.3s;
+  }
+  .modal-overlay.active .modal { transform: translateY(0); }
+  .modal-close { position: absolute; top: 16px; right: 20px; background: none; border: none; color: #666; font-size: 24px; cursor: pointer; }
+  .modal-close:hover { color: #fff; }
+  .modal-tabs { display: flex; gap: 0; margin-bottom: 28px; border-bottom: 2px solid #333; }
+  .modal-tab {
+    flex: 1; padding: 12px; text-align: center; font-weight: 700; font-size: 15px;
+    cursor: pointer; color: #666; border-bottom: 3px solid transparent; margin-bottom: -2px;
+    transition: all 0.2s;
+  }
+  .modal-tab.active { color: var(--orange); border-bottom-color: var(--orange); }
+  .modal-title { font-size: 24px; font-weight: 900; margin-bottom: 24px; }
+  .modal-group { margin-bottom: 16px; }
+  .modal-group label { display: block; font-size: 13px; font-weight: 600; color: #999; margin-bottom: 6px; }
+  .modal-group input {
+    width: 100%; background: #111; border: 1.5px solid #333; color: #fff;
+    padding: 12px 14px; border-radius: 8px; font-size: 15px; outline: none; transition: border-color 0.2s;
+  }
+  .modal-group input:focus { border-color: var(--orange); }
+  .btn-entrar { width: 100%; background: var(--orange); color: #fff; border: none; padding: 14px; border-radius: 8px; font-size: 16px; font-weight: 800; cursor: pointer; margin-top: 8px; }
+  .divider { text-align: center; color: #555; font-size: 13px; margin: 16px 0; position: relative; }
+  .divider::before, .divider::after { content: ""; position: absolute; top: 50%; width: 38%; height: 1px; background: #333; }
+  .divider::before { left: 0; } .divider::after { right: 0; }
+  .social-btns { display: flex; gap: 10px; }
+  .btn-social {
+    flex: 1; padding: 11px; border-radius: 8px; border: 1.5px solid #333;
+    background: transparent; color: #fff; font-size: 14px; font-weight: 600;
+    cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  .btn-social:hover { background: #222; }
+
+  footer { background: #0a0a0a; border-top: 2px solid var(--orange); padding: 32px; text-align: center; color: #444; font-size: 13px; }
+  .footer-logo { font-size: 20px; font-weight: 900; color: var(--orange); margin-bottom: 8px; }
+</style>
+</head>
+<body>
+
+<div class="version-banner">
+  ⚠️ PROTÓTIPO v0.1 — Layout desatualizado, será melhorado com o tempo | The Paint — Basquete Total
+</div>
+
+<header>
+  <div class="logo">THE PAINT <span>Basquete Total</span></div>
+  <nav>
+    <a href="#">Início</a><a href="#">NBA</a><a href="#">FIBA</a>
+    <a href="#">Loja</a><a href="#">Sobre</a>
+    <a href="#" class="active">Contato</a>
+    <button class="btn-login-h" id="openModal">Entrar</button>
+  </nav>
+</header>
+
+<div class="page-title">
+  <h1>Entre em <span>Contato</span></h1>
+  <p>Mande sua mensagem, sugestão ou dúvida. Respondemos em até 48h.</p>
+</div>
+
+<div class="contact-grid">
+
+  <!-- FORMULÁRIO -->
+  <div class="contact-form-card">
+    <div class="form-title">📩 Envie uma mensagem</div>
+    <div class="form-group">
+      <label>Nome completo</label>
+      <input type="text" placeholder="Seu nome">
+    </div>
+    <div class="form-group">
+      <label>E-mail</label>
+      <input type="email" placeholder="seu@email.com">
+    </div>
+    <div class="form-group">
+      <label>Assunto</label>
+      <select>
+        <option>Selecione um assunto</option>
+        <option>Dúvida sobre a loja</option>
+        <option>Parceria</option>
+        <option>Sugestão</option>
+        <option>Outro</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Mensagem</label>
+      <textarea placeholder="Escreva sua mensagem aqui..."></textarea>
+    </div>
+    <button class="btn-submit">Enviar Mensagem →</button>
+  </div>
+
+  <!-- MAPA E INFO -->
+  <div class="map-info-card">
+    <div class="info-card">
+      <div class="info-title">📍 Informações de Contato</div>
+      <div class="info-item"><span class="info-icon">📧</span> contato@thepaint.com.br</div>
+      <div class="info-item"><span class="info-icon">📞</span> (11) 98765-4321</div>
+      <div class="info-item"><span class="info-icon">📍</span> Rua do Basquete, 1891 — São Paulo, SP</div>
+      <div class="info-item"><span class="info-icon">📷</span> @thepaintbasquete</div>
+      <div class="info-item"><span class="info-icon">🐦</span> @thepaintbasquete</div>
+    </div>
+
+    <div class="info-card">
+      <div class="info-title">🗺️ Nossa Localização</div>
+      <div class="map-placeholder">
+        <span>🗺️</span>
+        <p>Mapa — São Paulo, SP</p>
+        <p style="font-size:12px;color:#444">Google Maps embed aqui</p>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- MODAL LOGIN -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <button class="modal-close" id="closeModal">×</button>
+    <div class="modal-tabs">
+      <div class="modal-tab active" id="tabLogin">Login</div>
+      <div class="modal-tab" id="tabCadastro">Cadastro</div>
+    </div>
+
+    <!-- ABA LOGIN -->
+    <div id="panelLogin">
+      <div class="modal-title">Bem-vindo de volta! 👋</div>
+      <div class="modal-group">
+        <label>E-mail</label>
+        <input type="email" placeholder="seu@email.com">
+      </div>
+      <div class="modal-group">
+        <label>Senha</label>
+        <input type="password" placeholder="••••••••">
+      </div>
+      <button class="btn-entrar">Entrar →</button>
+      <div class="divider">ou continue com</div>
+      <div class="social-btns">
+        <button class="btn-social">🔵 Google</button>
+        <button class="btn-social">🍎 Apple</button>
+      </div>
+    </div>
+
+    <!-- ABA CADASTRO (oculta por padrão) -->
+    <div id="panelCadastro" style="display:none">
+      <div class="modal-title">Criar conta 🏀</div>
+      <div class="modal-group">
+        <label>Nome completo</label>
+        <input type="text" placeholder="Seu nome">
+      </div>
+      <div class="modal-group">
+        <label>E-mail</label>
+        <input type="email" placeholder="seu@email.com">
+      </div>
+      <div class="modal-group">
+        <label>Senha</label>
+        <input type="password" placeholder="Crie uma senha">
+      </div>
+      <button class="btn-entrar">Cadastrar →</button>
+      <div class="divider">ou cadastre com</div>
+      <div class="social-btns">
+        <button class="btn-social">🔵 Google</button>
+        <button class="btn-social">🍎 Apple</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<footer>
+  <div class="footer-logo">THE PAINT 🏀</div>
+  <div>© 2026 The Paint — Basquete Total · contato@thepaint.com.br</div>
+</footer>
+
+<script>
+const overlay = document.getElementById('modalOverlay');
+document.getElementById('openModal').addEventListener('click', () => overlay.classList.add('active'));
+document.getElementById('closeModal').addEventListener('click', () => overlay.classList.remove('active'));
+overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.classList.remove('active'); });
+
+const tabLogin = document.getElementById('tabLogin');
+const tabCadastro = document.getElementById('tabCadastro');
+tabLogin.addEventListener('click', () => {
+  tabLogin.classList.add('active'); tabCadastro.classList.remove('active');
+  document.getElementById('panelLogin').style.display = 'block';
+  document.getElementById('panelCadastro').style.display = 'none';
+});
+tabCadastro.addEventListener('click', () => {
+  tabCadastro.classList.add('active'); tabLogin.classList.remove('active');
+  document.getElementById('panelCadastro').style.display = 'block';
+  document.getElementById('panelLogin').style.display = 'none';
+});
+</script>
+</body>
+</html>
